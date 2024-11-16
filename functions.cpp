@@ -7,10 +7,12 @@
 #include "./User.hpp"
 #include "./Cards.hpp"
 #include "functions.hpp"
+#include "./Choice.hpp"
 
 using namespace std;
 using namespace card;
 using namespace person;
+using namespace choice;
 
 
 namespace project2{
@@ -51,12 +53,13 @@ namespace project2{
 		string decision;
 		short cardTotal;
 		cardTotal = card1.cardNumber + card2.cardNumber;
-		
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		
 		while (true) {
 
 		cout << "You are at " << cardTotal << " points." << endl;
 		cout << "Would you like to hit or stand?" << endl;
+		
 		getline(cin, decision);
 
 		if (decision.find("hit") != string::npos) {
@@ -101,6 +104,80 @@ namespace project2{
 		return to_string(card.cardNumber);
 	}
 
+	short houseTurn(short playerScore, Deck& currentDeck) {
+
+		Card card1 = drawCard(currentDeck);
+		Card card2 = drawCard(currentDeck);
+		
+		short cardTotal;
+		cardTotal = card1.cardNumber + card2.cardNumber;
+
+		while (true) {
+			if ((cardTotal > playerScore) || (cardTotal == 21)) {
+				break;
+			}
+			Card newCard = drawCard(currentDeck);
+			cardTotal += newCard.cardNumber;
+		}
+
+		return cardTotal;
+	}
+
+	void menu(User newUser, Deck& newDeck) {
+		cout << "Welcome." << endl;
+		
+		bool playing = true;
+		
+		while (playing) {
+			cout << "\n1.Play Blackjack \n2.Shuffle deck \n3.Quit" << endl;
+			int choice;
+			cin >> choice;
+			switch (choice) {
+				case static_cast<int>(Choice::play):
+					short playerScore;
+					short houseScore;
+					playerScore = playerTurn(newUser, newDeck);
+					if (playerScore == 21) {
+						cout << "Player wins!" << endl;
+					}
+					else if (playerScore > 21) {
+						cout << "Player busts! Automatic loss." << endl;
+					}
+					else {
+						houseScore = houseTurn(playerScore, newDeck);
+						if (houseScore > 21) {
+							cout << "House busts! Player wins!" << endl;
+						}
+						else if (houseScore > playerScore) {
+							cout << "House wins!" << endl;
+						}
+						else if (houseScore == playerScore) {
+							cout << "It's a tie!" << endl;
+						}
+						else {
+							cout << "Player wins!" << endl;
+						}
+						cout << "House score was: " << houseScore << endl;
+						cout << "Player score was: " << playerScore << endl;
+					}
+					break;
+				case static_cast<int>(Choice::shuffleDeck): 
+					break;
+				case static_cast<int>(Choice::quit):
+					playing = false;
+					break;
+				default:
+					cout << "Error, please try again." << endl;
+					cin.clear();
+					cin.ignore(numeric_limits<streamsize>::max(), '\n');
+					break;
+			}
+
+
+		}
+		
+
+	}
 
 }
 

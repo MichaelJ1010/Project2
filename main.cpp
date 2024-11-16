@@ -18,15 +18,8 @@ int main() {
 	User newUser{ "Michael", "Johnson", {0,0} };
 	Deck newDeck{ deck };
 
+	menu(newUser, newDeck);
 
-	//drawCard(newDeck);
-
-	//for (auto card : newDeck.deck) {
-	//	cout << card.cardNumber << card.cardType << endl;
-	//}	
-	
-		playerTurn(newUser, newDeck);
-
-	
+		
 	return 0;
 }

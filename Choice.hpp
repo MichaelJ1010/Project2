@@ -1,12 +1,11 @@
 #ifndef CHOICE_H
-#define
+#define CHOICE_H
 
 namespace choice {
 	enum class Choice {
 		play = 1,
-		shuffleDeck,
-		quit
-
+		shuffleDeck = 2,
+		quit = 3
 	};
 }
 #endif // !CHOICE_H
