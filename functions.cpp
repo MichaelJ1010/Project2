@@ -32,23 +32,75 @@ namespace project2{
 			
 		}
 	}
+
 	Card drawCard(Deck& currentDeck){
 		srand(time(0));
 		int randomNumber = rand() % currentDeck.deck.size();
 		//cout << randomNumber << endl;
 		//cout << "Drew " << currentDeck.deck[randomNumber].cardNumber << currentDeck.deck[randomNumber].cardType << endl;
 		Card card = currentDeck.deck[randomNumber];
-		
+		cout << "Drew " << cardName(card) << card.cardType << endl;
 		currentDeck.deck.erase(currentDeck.deck.begin() + randomNumber);
 
 		return card;
 	}
-	void playerTurn(User player, Deck& currentDeck) {
+
+	short playerTurn(User player, Deck& currentDeck) {
 		Card card1 = drawCard(currentDeck);
 		Card card2 = drawCard(currentDeck);
-		cout << "Drew " << card1.cardNumber << card1.cardType << " and " << card2.cardNumber << card2.cardType << endl;
-		cout << "You are at " << card1.cardNumber + card2.cardNumber << " points." << endl;
+		string decision;
+		short cardTotal;
+		cardTotal = card1.cardNumber + card2.cardNumber;
+		
+		
+		while (true) {
+
+		cout << "You are at " << cardTotal << " points." << endl;
+		cout << "Would you like to hit or stand?" << endl;
+		getline(cin, decision);
+
+		if (decision.find("hit") != string::npos) {
+			Card newCard = drawCard(currentDeck);
+			cardTotal += newCard.cardNumber;
+			if (cardTotal >= 21) {
+				break;
+			}
+		}
+		else if(decision.find("stand") != string::npos) {
+			cout << "standing at " << cardTotal << "\n\n";
+
+			break;
+		}
+		else {
+			cout << "error, please try again." << endl;
+			
+		}
+		//cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+		}
+
+		return cardTotal;
 	}
+
+	string cardName(Card& card) {
+		if (card.cardNumber == 1) {
+			return "A";
+		}
+		if (card.cardNumber == 11) {
+			card.cardNumber = 10;
+			return "J";
+		}
+		if (card.cardNumber == 12) {
+			card.cardNumber = 10;
+			return "Q";
+		}
+		if (card.cardNumber == 13) {
+			card.cardNumber = 10;
+			return "K";
+		}
+		return to_string(card.cardNumber);
+	}
+
 
 }
 
