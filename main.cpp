@@ -24,10 +24,9 @@ int main() {
 	//for (auto card : newDeck.deck) {
 	//	cout << card.cardNumber << card.cardType << endl;
 	//}	
-	while(newDeck.deck.size() > 1){
+	
 		playerTurn(newUser, newDeck);
 
-	}
-	cout << newDeck.deck.size() << endl;
+	
 	return 0;
 }
