@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
-#include <string>
+#include <sstream>
 
 #include "./User.hpp"
 #include "./Cards.hpp"
@@ -30,9 +30,10 @@ namespace project2{
 			string username;
 			string checkUsername = "null";
 			string checkPassword = "null";
-			string wins;
-			string losses;
+			short wins;
+			short losses;
 			string password;
+
 			cin >> choice;
 			switch (choice) {
 
@@ -50,33 +51,38 @@ namespace project2{
 				if (file.is_open()) {
 					while (!file.eof()) {
 						if (checkUsername.empty()) { // for the last check when there’s nothing left (VITAL)
+							cout << "loop";
 							continue;
 						}
-
+						cout << "here" << endl;
 						getline(file, checkUsername, ',');
 						file.ignore();
 						getline(file, checkPassword, ',');
 						file.ignore();
-						getline(file, wins, ',');
+						file >> wins;
 						file.ignore();
-						getline(file, losses, '\n');
+						
+						file >> losses;
 						file.ignore();
-						User checkUser{ checkUsername, checkPassword, {(short)stoi(wins),(short)stoi(losses)} };
+
+						
+						User checkUser{ checkUsername, checkPassword, {wins,losses} };
 						if (checkUser == User{ username, password, {0,0} }) {
-							//return checkUser;
+							file.close();
+							return checkUser;
 						}
 
-						cout << checkUsername << endl;
+						/*cout << checkUsername << endl;
 						cout << username << endl;
 						cout << (checkUsername == username) << endl;
 						if (checkUsername == username) {
 							cout << "username exists." << endl;
 
-						}
+						}*/
 					}
-					file.close(); //ensure that you close the file, or else nothing else can access it
-
+					 //ensure that you close the file, or else nothing else can access it
 				}
+				file.close();
 			case 2:
 				cout << "Username: ";
 				cin.clear();
