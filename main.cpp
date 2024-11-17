@@ -11,7 +11,7 @@ using namespace project2;
 int main() {
 	short currentWins;
 	short currentLosses;
-	makeUser();
+	User currentUser = makeUser();
 	vector<Card> deck;
 	newDeck(deck);
 	/*vector<Card> deck{ Card{'1', "Spades"}, Card{'2', "Spades"} };*/

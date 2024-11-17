@@ -1,9 +1,14 @@
 #include <iostream>
 #include <limits>
 #include <iomanip>
+#include <filesystem>
 #include <vector>
 #include <ctime>
 #include <cstdlib>
+#include <fstream>
+#include <iomanip>
+#include <string>
+
 #include "./User.hpp"
 #include "./Cards.hpp"
 #include "functions.hpp"
@@ -16,14 +21,95 @@ using namespace choice;
 
 
 namespace project2{
-	void makeUser() {
-		string username;
-		string password;
-		cout << "Username: ";
-		getline(cin, username);
+	User makeUser() {
+		cout << "Have you created an account already? (enter the number of your response) \n1.yes \n2.no" << endl;
+		fstream file;
 
-		cout << "\nPassword: ";
-		getline(cin, password);
+		while (true) {
+			int choice;
+			string username;
+			string checkUsername = "null";
+			string checkPassword = "null";
+			string wins;
+			string losses;
+			string password;
+			cin >> choice;
+			switch (choice) {
+
+			case 1:
+
+				cout << "Username: ";
+				cin.clear();
+				cin.ignore();
+				getline(cin, username);
+
+				cout << "\nPassword: ";
+				getline(cin, password);
+
+				file.open("data.txt");
+				if (file.is_open()) {
+					while (!file.eof()) {
+						if (checkUsername.empty()) { // for the last check when there’s nothing left (VITAL)
+							continue;
+						}
+
+						getline(file, checkUsername, ',');
+						file.ignore();
+						getline(file, checkPassword, ',');
+						file.ignore();
+						getline(file, wins, ',');
+						file.ignore();
+						getline(file, losses, '\n');
+						file.ignore();
+						User checkUser{ checkUsername, checkPassword, {(short)stoi(wins),(short)stoi(losses)} };
+						if (checkUser == User{ username, password, {0,0} }) {
+							//return checkUser;
+						}
+
+						cout << checkUsername << endl;
+						cout << username << endl;
+						cout << (checkUsername == username) << endl;
+						if (checkUsername == username) {
+							cout << "username exists." << endl;
+
+						}
+					}
+					file.close(); //ensure that you close the file, or else nothing else can access it
+
+				}
+			case 2:
+				cout << "Username: ";
+				cin.clear();
+				cin.ignore();
+				getline(cin, username);
+
+				cout << "\nPassword: ";
+				getline(cin, password);
+
+				file.open("data.txt");
+				if (file.is_open()) {
+					while (!file.eof()) {
+						if (checkUsername.empty()) {
+							continue;
+						}
+						getline(file, checkUsername, '\n');
+						file.ignore();
+
+					}
+				}
+				file << username << ",";
+				file << password << ",";
+				file << "0,";
+				file << "0\n";
+				break;
+				//file << username << ",";	
+				//file << password << '\n';
+				//cout << filesystem::current_path() << endl;
+				file.close();
+
+
+			}
+		}
 	}
 
 	void newDeck(vector<Card>& deck) {
@@ -177,6 +263,10 @@ namespace project2{
 		}
 		
 
+	}
+
+	bool operator==(person::User account1, person::User account2) {
+		return ((account1.userName == account2.userName) && (account1.password == account2.password));
 	}
 
 }
