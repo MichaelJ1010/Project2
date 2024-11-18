@@ -1,12 +1,10 @@
 #include <iostream>
 #include <limits>
 #include <iomanip>
-#include <filesystem>
 #include <vector>
 #include <ctime>
 #include <cstdlib>
 #include <fstream>
-#include <iomanip>
 #include <sstream>
 #include <cstring>
 
@@ -102,7 +100,7 @@ namespace project2{
 	}
 
 	void newDeck(vector<Card>& deck) {
-		cout << "shuffling deck..." << endl;
+		cout << "shuffling deck..." << endl;	
 		vector<Card> newDeck;
 		for (short i = 3; i <= 6; i++) {
 			for (short j = 1; j <= 13; j++) {
