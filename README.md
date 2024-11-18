@@ -18,6 +18,7 @@ This project is an attempt at recreating **Blackjack**. The goal is to get as cl
 - The player can choose to "**hit**" (draw a card) or "**stand**" (keep current hand).
 - The house draws until it beats the player or **busts** (goes over 21).
 
-##Screenshots
+## Screenshots
+
 ![image](https://github.com/user-attachments/assets/a31c0159-6417-4b96-9026-76c668d110ee)
 
