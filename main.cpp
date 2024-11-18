@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include "./User.hpp"
 #include "./Cards.hpp"
 #include "./functions.hpp"
@@ -9,17 +10,15 @@ using namespace person;
 using namespace project2;
 
 int main() {
-	short currentWins;
-	short currentLosses;
-	User currentUser = makeUser();
+	
+	User* user = makeUser();
 	vector<Card> deck;
 	newDeck(deck);
-	/*vector<Card> deck{ Card{'1', "Spades"}, Card{'2', "Spades"} };*/
-	User newUser{ "Michael", "Johnson", {0,0} };
 	Deck newDeck{ deck };
+	shared_ptr<Deck> currentDeck = make_shared<Deck>(newDeck);
+	menu(user, currentDeck);
 
-	menu(newUser, newDeck);
-
-		
+	delete user;
+	user = nullptr;
 	return 0;
 }
