@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <cstring>
 
 #include "./User.hpp"
 #include "./Cards.hpp"
@@ -21,19 +22,19 @@ using namespace choice;
 
 
 namespace project2{
-	User makeUser() {
-		cout << "Have you created an account already? (enter the number of your response) \n1.yes \n2.no" << endl;
+	User* makeUser() {
 		fstream file;
+		int choice;
+		string readLine;
+		string username;
+		string checkUsername = "null";
+		string checkPassword = "null";
+		short wins;
+		short losses;
+		string password;
 
 		while (true) {
-			int choice;
-			string username;
-			string checkUsername = "null";
-			string checkPassword = "null";
-			short wins;
-			short losses;
-			string password;
-
+			cout << "Have you created an account already? (enter the number of your response) \n1.yes \n2.no" << endl;
 			cin >> choice;
 			switch (choice) {
 
@@ -41,7 +42,7 @@ namespace project2{
 
 				cout << "Username: ";
 				cin.clear();
-				cin.ignore();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				getline(cin, username);
 
 				cout << "\nPassword: ";
@@ -51,91 +52,79 @@ namespace project2{
 				if (file.is_open()) {
 					while (!file.eof()) {
 						if (checkUsername.empty()) { // for the last check when there’s nothing left (VITAL)
-							cout << "loop";
 							continue;
 						}
-						cout << "here" << endl;
-						getline(file, checkUsername, ',');
-						file.ignore();
-						getline(file, checkPassword, ',');
-						file.ignore();
-						file >> wins;
-						file.ignore();
-						
-						file >> losses;
-						file.ignore();
+						getline(file, readLine);
+						istringstream stream(readLine);
 
+						stream >> checkUsername >> checkPassword >> wins >> losses;
 						
-						User checkUser{ checkUsername, checkPassword, {wins,losses} };
-						if (checkUser == User{ username, password, {0,0} }) {
+						//cout << checkUsername << checkPassword << wins << losses << endl;
+
+						//cout << ((User{ checkUsername, checkPassword, {wins,losses} }) == (User{ username, password, {0,0} })) << endl;
+					
+						if ((User{ checkUsername, checkPassword, {wins,losses} }) == (User{ username, password, {0,0} })) {
 							file.close();
-							return checkUser;
-						}
-
-						/*cout << checkUsername << endl;
-						cout << username << endl;
-						cout << (checkUsername == username) << endl;
-						if (checkUsername == username) {
-							cout << "username exists." << endl;
-
-						}*/
+							return new User{ checkUsername, checkPassword, {wins,losses} };
+						}	
 					}
-					 //ensure that you close the file, or else nothing else can access it
+					file.close(); //ensure that you close the file, or else nothing else can access it
+					cout << "Account not found." << endl;
+					break;	 
 				}
 				file.close();
+
 			case 2:
 				cout << "Username: ";
 				cin.clear();
-				cin.ignore();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				getline(cin, username);
 
 				cout << "\nPassword: ";
 				getline(cin, password);
 
-				file.open("data.txt");
+				file.open("data.txt", ios::app);
 				if (file.is_open()) {
-					while (!file.eof()) {
-						if (checkUsername.empty()) {
-							continue;
-						}
-						getline(file, checkUsername, '\n');
-						file.ignore();
-
-					}
-				}
-				file << username << ",";
-				file << password << ",";
-				file << "0,";
-				file << "0\n";
+					file << "\n" << username << " ";
+					file << password << " ";
+					file << "0 ";
+					file << "0";
+					file.close();
+					return new User{ username, password, {0,0} };
+				}				
 				break;
-				//file << username << ",";	
-				//file << password << '\n';
-				//cout << filesystem::current_path() << endl;
-				file.close();
-
-
-			}
+					
+			default:
+				if (cin.fail()) {
+					cin.clear();
+					cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				}
+				cout << "error, please type in 1 or 2." << endl;
+				break;
+			}	
 		}
 	}
 
 	void newDeck(vector<Card>& deck) {
+		cout << "shuffling deck..." << endl;
+		vector<Card> newDeck;
 		for (short i = 3; i <= 6; i++) {
 			for (short j = 1; j <= 13; j++) {
-				deck.push_back(Card{ j, (char)i });
+				newDeck.push_back(Card{ j, (char)i });
 			}
-			
 		}
+		deck = newDeck;
 	}
 
 	Card drawCard(Deck& currentDeck){
 		srand(time(0));
 		int randomNumber = rand() % currentDeck.deck.size();
-		//cout << randomNumber << endl;
-		//cout << "Drew " << currentDeck.deck[randomNumber].cardNumber << currentDeck.deck[randomNumber].cardType << endl;
 		Card card = currentDeck.deck[randomNumber];
 		cout << "Drew " << cardName(card) << card.cardType << endl;
 		currentDeck.deck.erase(currentDeck.deck.begin() + randomNumber);
-
+		if (currentDeck.deck.empty()) {
+			newDeck(currentDeck.deck);
+		}
 		return card;
 	}
 
@@ -215,49 +204,59 @@ namespace project2{
 		return cardTotal;
 	}
 
-	void menu(User newUser, Deck& newDeck) {
-		cout << "Welcome." << endl;
+	void menu(User* user, shared_ptr<Deck> currentDeck) {
+		cout << "Welcome " << user->userName << endl;
 		
 		bool playing = true;
-		
+
 		while (playing) {
 			cout << "\n1.Play Blackjack \n2.Shuffle deck \n3.Quit" << endl;
 			int choice;
 			cin >> choice;
 			switch (choice) {
+				
 				case static_cast<int>(Choice::play):
 					short playerScore;
 					short houseScore;
-					playerScore = playerTurn(newUser, newDeck);
+					playerScore = playerTurn(*user, *currentDeck);
 					if (playerScore == 21) {
 						cout << "Player wins!" << endl;
+						user->currentRecord.totalWins++;
 					}
 					else if (playerScore > 21) {
 						cout << "Player busts! Automatic loss." << endl;
+						user->currentRecord.totalLosses++;
 					}
 					else {
-						houseScore = houseTurn(playerScore, newDeck);
+						houseScore = houseTurn(playerScore, *currentDeck);
 						if (houseScore > 21) {
 							cout << "House busts! Player wins!" << endl;
+							user->currentRecord.totalWins++;
 						}
 						else if (houseScore > playerScore) {
 							cout << "House wins!" << endl;
+							user->currentRecord.totalLosses++;
 						}
 						else if (houseScore == playerScore) {
 							cout << "It's a tie!" << endl;
 						}
 						else {
 							cout << "Player wins!" << endl;
+							user->currentRecord.totalWins++;
 						}
 						cout << "House score was: " << houseScore << endl;
 						cout << "Player score was: " << playerScore << endl;
 					}
 					break;
+				
 				case static_cast<int>(Choice::shuffleDeck): 
+					newDeck(currentDeck->deck);
 					break;
+				
 				case static_cast<int>(Choice::quit):
 					playing = false;
 					break;
+				
 				default:
 					cout << "Error, please try again." << endl;
 					cin.clear();
@@ -267,12 +266,74 @@ namespace project2{
 
 
 		}
+
+		cout << "Would you like to save your progress? (y/n)" << endl;
+		char answer[2];
 		
+		const char yes[2] = { 'y', '\0' };
+		const char no[2] = { 'n', '\0' };
+		cin >> answer;
+		
+		
+		if (strcmp(answer, yes) == 0) {
+			saveProgress(*user);
+			return;
+		}
+		else if (strcmp(answer, no) == 0) {
+			return;
+			
+		}
+		else {
+			cout << "Error, try again." << endl;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
 
 	}
 
 	bool operator==(person::User account1, person::User account2) {
 		return ((account1.userName == account2.userName) && (account1.password == account2.password));
+	}
+
+	void saveProgress(User user) {
+		fstream file;
+		file.open("data.txt");
+		bool found = false;
+		stringstream update;
+		if (file.is_open()) {
+			
+			string readLine;
+			string checkUsername, checkPassword;
+			short wins, losses;
+					
+			while (getline(file, readLine)) {
+				istringstream stream(readLine);
+				stream >> checkUsername >> checkPassword >> wins >> losses;
+
+				if (User{checkUsername, checkPassword, {wins,losses}} == user) {
+			
+					update << user.userName << " " << user.password << " "
+						<< user.currentRecord.totalWins << " " << user.currentRecord.totalLosses << "\n";
+					found = true;
+				}
+				else {
+					update << readLine << "\n";
+				}
+			}
+
+			file.close();
+		}
+
+		if (found) {
+			ofstream outFile("data.txt", ios::out | ios::trunc);
+
+			outFile << update.str();
+			outFile.close();
+			cout << "Progress saved successfully!" << endl;
+		}
+		else {
+			cout << "User not found. No changes made." << endl;
+		}
 	}
 
 }
