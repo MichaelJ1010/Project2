@@ -24,4 +24,7 @@ This project is an attempt at recreating **Blackjack**. The goal is to get as cl
 
 ![image](https://github.com/user-attachments/assets/33295ade-3194-46e4-b06c-e7d1719c3561)
 
+## Video
+[![Watch the video](https://img.youtube.com/vi/avmQrv3iErU/maxresdefault.jpg)](https://youtu.be/avmQrv3iErU)
+
 
