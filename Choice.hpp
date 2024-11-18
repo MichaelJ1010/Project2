@@ -4,8 +4,8 @@
 namespace choice {
 	enum class Choice {
 		play = 1,
-		shuffleDeck = 2,
-		quit = 3
+		shuffleDeck,
+		quit
 	};
 }
 #endif // !CHOICE_H
