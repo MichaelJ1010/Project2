@@ -58,10 +58,6 @@ namespace project2{
 						istringstream stream(readLine);
 
 						stream >> checkUsername >> checkPassword >> wins >> losses;
-						
-						//cout << checkUsername << checkPassword << wins << losses << endl;
-
-						//cout << ((User{ checkUsername, checkPassword, {wins,losses} }) == (User{ username, password, {0,0} })) << endl;
 					
 						if ((User{ checkUsername, checkPassword, {wins,losses} }) == (User{ username, password, {0,0} })) {
 							file.close();
@@ -159,7 +155,7 @@ namespace project2{
 			cout << "error, please try again." << endl;
 			
 		}
-		//cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		
 
 		}
 

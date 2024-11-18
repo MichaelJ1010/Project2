@@ -16,7 +16,7 @@ namespace project2 {
 	short houseTurn(short playerScore, card::Deck& currentDeck); //simulates the turn of the house
 	void menu(person::User* user, std::shared_ptr<card::Deck> deck); //option screen to give user choices on what they want to do
 	bool operator==(person::User account1, person::User account2); //compares two account names and passwords
-	void saveProgress(person::User player);
+	void saveProgress(person::User player); //saves the progress of the user in data.txt
 
 
 }
