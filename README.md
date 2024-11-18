@@ -1,5 +1,5 @@
 # Project2: Blackjack Game
-
+### Author: Michael Johnson
 ## Overview
 This project is an attempt at recreating **Blackjack**. The goal is to get as close to **21** as possible, playing against the house (the computer).
 
