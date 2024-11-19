@@ -202,6 +202,7 @@ namespace project2{
 		cout << "Welcome " << user->userName << endl;
 		
 		bool playing = true;
+		vector<vector<short>> currentRecord = { {user->currentRecord.totalWins}, {user->currentRecord.totalLosses} };
 
 		while (playing) {
 			cout << "\n1.Play Blackjack \n2.Shuffle deck \n3.Quit" << endl;
@@ -215,28 +216,31 @@ namespace project2{
 					playerScore = playerTurn(*user, *currentDeck);
 					if (playerScore == 21) {
 						cout << "Player wins!" << endl;
-						user->currentRecord.totalWins++;
+						currentRecord[0][0] = currentRecord[0][0] + 1;
+						
 					}
 					else if (playerScore > 21) {
 						cout << "Player busts! Automatic loss." << endl;
-						user->currentRecord.totalLosses++;
+						currentRecord[1][0] = currentRecord[1][0] + 1;
 					}
 					else {
 						houseScore = houseTurn(playerScore, *currentDeck);
 						if (houseScore > 21) {
 							cout << "House busts! Player wins!" << endl;
-							user->currentRecord.totalWins++;
+							currentRecord[0][0] = currentRecord[0][0] + 1;
+						
 						}
 						else if (houseScore > playerScore) {
 							cout << "House wins!" << endl;
-							user->currentRecord.totalLosses++;
+							currentRecord[1][0] = currentRecord[1][0] + 1;
+							
 						}
 						else if (houseScore == playerScore) {
 							cout << "It's a tie!" << endl;
 						}
 						else {
 							cout << "Player wins!" << endl;
-							user->currentRecord.totalWins++;
+							currentRecord[0][0] = currentRecord[0][0] + 1;
 						}
 						cout << "House score was: " << houseScore << endl;
 						cout << "Player score was: " << playerScore << endl;
@@ -270,7 +274,7 @@ namespace project2{
 		
 		
 		if (strcmp(answer, yes) == 0) {
-			saveProgress(*user);
+			saveProgress(*user, currentRecord);
 			return;
 		}
 		else if (strcmp(answer, no) == 0) {
@@ -289,7 +293,7 @@ namespace project2{
 		return ((account1.userName == account2.userName) && (account1.password == account2.password));
 	}
 
-	void saveProgress(User user) {
+	void saveProgress(const User& user, vector<vector<short>> record) {
 		fstream file;
 		file.open("data.txt");
 		bool found = false;
@@ -307,7 +311,7 @@ namespace project2{
 				if (User{checkUsername, checkPassword, {wins,losses}} == user) {
 			
 					update << user.userName << " " << user.password << " "
-						<< user.currentRecord.totalWins << " " << user.currentRecord.totalLosses << "\n";
+						<< record[0][0] << " " << record[1][0] << "\n";
 					found = true;
 				}
 				else {
