@@ -34,10 +34,11 @@ namespace project2{
 		while (true) {
 			cout << "Have you created an account already? (enter the number of your response) \n1.yes \n2.no" << endl;
 			cin >> choice;
+			
 			switch (choice) {
 
 			case 1:
-
+				
 				cout << "Username: ";
 				cin.clear();
 				cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -66,7 +67,9 @@ namespace project2{
 					cout << "Account not found." << endl;
 					break;	 
 				}
-				file.close();
+				cout << "Error opening file. Please make an account first." << endl;
+				break;
+				
 
 			case 2:
 				cout << "Username: ";
