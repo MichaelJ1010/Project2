@@ -49,7 +49,7 @@ namespace project2{
 				file.open("data.txt");
 				if (file.is_open()) {
 					while (!file.eof()) {
-						if (checkUsername.empty()) { // for the last check when there’s nothing left (VITAL)
+						if (checkUsername.empty() || checkPassword.empty()) { // for the last check when there’s nothing left (VITAL)
 							continue;
 						}
 						getline(file, readLine);
@@ -266,25 +266,31 @@ namespace project2{
 		}
 
 		cout << "Would you like to save your progress? (y/n)" << endl;
-		char answer[2];
+		
 		
 		const char yes[2] = { 'y', '\0' };
 		const char no[2] = { 'n', '\0' };
+
+		
+		while (true) {
+		char answer[2];
 		cin >> answer;
-		
-		
-		if (strcmp(answer, yes) == 0) {
-			saveProgress(*user, currentRecord);
-			return;
-		}
-		else if (strcmp(answer, no) == 0) {
-			return;
-			
-		}
-		else {
-			cout << "Error, try again." << endl;
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			if (strcmp(answer, yes) == 0) {
+				saveProgress(*user, currentRecord);
+				return;
+			}
+			else if (strcmp(answer, no) == 0) {
+				return;
+
+			}
+			else {
+				cout << "Error, try again." << endl;
+				if (cin.fail()) {
+					cin.clear();
+					cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				}
+				
+			}
 		}
 
 	}
