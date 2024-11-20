@@ -125,7 +125,7 @@ namespace project2{
 		return card;
 	}
 
-	short playerTurn(User player, Deck& currentDeck) {
+	short playerTurn(const User& player, Deck& currentDeck) {
 		Card card1 = drawCard(currentDeck);
 		Card card2 = drawCard(currentDeck);
 		string decision;
@@ -298,7 +298,7 @@ namespace project2{
 
 	}
 
-	bool operator==(person::User account1, person::User account2) {
+	bool operator==(const person::User& account1, const person::User& account2) {
 		return ((account1.userName == account2.userName) && (account1.password == account2.password));
 	}
 
